@@ -1,8 +1,7 @@
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-
+<!-- ✅ 모듈 방식: type="module" 하나만 사용 -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCuiqB5e_UC9t3SGYY4WRqt9FWED4ha98U",
@@ -12,15 +11,13 @@
     messagingSenderId: "1063562131981",
     appId: "1:1063562131981:web:dfbe741210a85736bdf344"
   };
-  const app = initializeApp(firebaseConfig);
-</script>
 
-<script>
-  const db = firebase.database();
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
   // 데이터 쓰기
   const writeData = (userId, item) => {
-    db.ref('users/' + userId).set({
+    set(ref(db, 'users/' + userId), {
       item0: item[0],
       item1: item[1],
       item2: item[2],
@@ -31,18 +28,21 @@
 
   // 데이터 읽기
   const readData = (userId) => {
-    const userRef = db.ref('users/' + userId);
-    userRef.on('value', (snapshot) => {
+    const userRef = ref(db, 'users/' + userId);
+    onValue(userRef, (snapshot) => {
       const data = snapshot.val();
       console.log("데이터 읽기:", data);
+      document.getElementById("output").innerText = JSON.stringify(data);
     });
   };
 
-  const saveData = () => {
-    writeData()
-  }
+  // 버튼과 연결
+  window.saveData = () => {
+    const sampleData = ["apple", "banana", "cherry", "date", "elderberry"];
+    writeData("user1", sampleData);
+    readData("user1");
+  };
 </script>
-
 
 <button onclick="saveData()">저장</button>
 <div id="output">데이터 없음</div>
