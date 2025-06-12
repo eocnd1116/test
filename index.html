@@ -1,48 +1,45 @@
-<!-- ✅ 모듈 방식: type="module" 하나만 사용 -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+    // Firebase SDK 라이브러리 불러오기
+    import { initializeApp } from 'firebase/app';
+    import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCuiqB5e_UC9t3SGYY4WRqt9FWED4ha98U",
-    authDomain: "asdf-dc75f.firebaseapp.com",
-    projectId: "asdf-dc75f",
-    storageBucket: "asdf-dc75f.firebasestorage.app",
-    messagingSenderId: "1063562131981",
-    appId: "1:1063562131981:web:dfbe741210a85736bdf344"
-  };
+    // TODO: Firebase 프로젝트 설정 정보를 여기에 붙여넣으세요.
+    const firebaseConfig = {
+        apiKey: "AIzaSyCuiqB5e_UC9t3SGYY4WRqt9FWED4ha98U",
+        authDomain: "asdf-dc75f.firebaseapp.com",
+        projectId: "asdf-dc75f",
+        storageBucket: "asdf-dc75f.firebasestorage.app",
+        messagingSenderId: "1063562131981",
+        appId: "1:1063562131981:web:dfbe741210a85736bdf344"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    // Firebase 앱 초기화
+    const app = initializeApp(firebaseConfig);
 
-  // 데이터 쓰기
-  const writeData = (userId, item) => {
-    set(ref(db, 'users/' + userId), {
-      item0: item[0],
-      item1: item[1],
-      item2: item[2],
-      item3: item[3],
-      item4: item[4],
-    });
-  };
+    // Firestore 인스턴스 가져오기
+    const db = getFirestore(app);
 
-  // 데이터 읽기
-  const readData = (userId) => {
-    const userRef = ref(db, 'users/' + userId);
-    onValue(userRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log("데이터 읽기:", data);
-      document.getElementById("output").innerText = JSON.stringify(data);
-    });
-  };
+    async function readDocument() {
+        const docRef = doc(db, "data", "DERN1DGJfIQujmyx2JkD"); // 컬렉션 이름과 문서 ID 지정
+        const docSnap = await getDoc(docRef); // 문서 스냅샷 가져오기
 
-  // 버튼과 연결
-  window.saveData = () => {
-    const sampleData = ["apple", "banana", "cherry", "date", "elderberry"];
-    writeData("user1", sampleData);
-    readData("user1");
-  };
+        if (docSnap.exists()) {
+            console.log("문서 데이터:", docSnap.data()); // 데이터 확인
+            // docSnap.data() 객체에서 item0, item1 등을 접근할 수 있습니다.
+            // 예: console.log(docSnap.data().item0);
+        } else {
+            console.log("문서가 존재하지 않습니다!");
+        }
+    }
+
+    async function readCollection() {
+        const querySnapshot = await getDocs(collection(db, "data")); // 'data' 컬렉션의 스냅샷 가져오기
+        querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} => ${doc.data()}`); // 각 문서의 ID와 데이터 확인
+            // 여기서 doc.data()에서 각 문서의 item0, item1 등을 접근할 수 있습니다.
+        });
+    }
 </script>
-
-<button onclick="saveData()">저장</button>
-<div id="output">데이터 없음</div>
