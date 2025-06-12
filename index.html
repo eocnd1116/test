@@ -1,0 +1,48 @@
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCuiqB5e_UC9t3SGYY4WRqt9FWED4ha98U",
+    authDomain: "asdf-dc75f.firebaseapp.com",
+    projectId: "asdf-dc75f",
+    storageBucket: "asdf-dc75f.firebasestorage.app",
+    messagingSenderId: "1063562131981",
+    appId: "1:1063562131981:web:dfbe741210a85736bdf344"
+  };
+  const app = initializeApp(firebaseConfig);
+</script>
+
+<script>
+  const db = firebase.database();
+
+  // 데이터 쓰기
+  const writeData = (userId, item) => {
+    db.ref('users/' + userId).set({
+      item0: item[0],
+      item1: item[1],
+      item2: item[2],
+      item3: item[3],
+      item4: item[4],
+    });
+  };
+
+  // 데이터 읽기
+  const readData = (userId) => {
+    const userRef = db.ref('users/' + userId);
+    userRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      console.log("데이터 읽기:", data);
+    });
+  };
+
+  const saveData() {
+    writeData()
+  }
+</script>
+
+
+<button onclick="saveData()">저장</button>
+<div id="output">데이터 없음</div>
